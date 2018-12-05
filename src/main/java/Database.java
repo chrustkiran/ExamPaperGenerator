@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 
 public class Database {
@@ -69,7 +66,21 @@ public class Database {
         return dbConnection;
     }
 
-    public int selectSubjectId(String subject){
+    public int selectSubjectId(String subject) throws SQLException, ClassNotFoundException {
+        Connection connection = getDBConnection();
+        Statement statement = null;
 
+        statement = connection.createStatement();
+        String sql = "SELECT id from subject where name = "+subject;
+        int rs = statement.executeUpdate(sql);
+        return rs;
+    }
+    public void insertSubject(String name) throws ClassNotFoundException, SQLException {
+        Connection connection = getDBConnection();
+        Statement statement = null;
+
+        statement = connection.createStatement();
+        String sql = "INSERT INTO subject (name) VALUES (" + name+" ) ";
+        statement.executeUpdate(sql);
     }
 }

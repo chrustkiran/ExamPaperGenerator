@@ -32,8 +32,16 @@ public class MainInterface {
                 //reader.readingDocFile();
 
 
+                int subjectCode = 0;
                 try {
-                    database.insertExam();
+                     subjectCode = database.selectSubjectId((String) comboSubjects.getSelectedItem());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    database.insertExam( textboxqQues.getText(), subjectCode) ;
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
