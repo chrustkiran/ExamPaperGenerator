@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 
 public class Database {
@@ -24,7 +25,7 @@ public class Database {
         Statement statement = null;
 
         statement = connection.createStatement();
-        String sql = "CREATE TABLE IF NOT EXISTS exam( id INTEGER  PRIMARY KEY auto_increment, subject INTEGER  , question VARCHAR(255)  FOREIGN KEY (subject) REFERENCES subject(id)";
+        String sql = "CREATE TABLE IF NOT EXISTS exam( id INTEGER  PRIMARY KEY auto_increment, subject INTEGER  , question VARCHAR(255) , FOREIGN KEY (subject) REFERENCES subject(id))";
         statement.executeUpdate(sql);
 
 
@@ -35,20 +36,20 @@ public class Database {
         Statement statement = null;
 
         statement = connection.createStatement();
-        String sql = "CREATE TABLE IF NOT EXISTS subject( id INTEGER  PRIMARY KEY auto_increment , name VARCHAR(255) PRIMARY KEY  )";
+        String sql = "CREATE TABLE IF NOT EXISTS subject( id INTEGER  PRIMARY KEY auto_increment , name VARCHAR(255) , UNIQUE(name)  )";
         statement.executeUpdate(sql);
 
 
     }
 
-    public void insertExam(String question , int subject) throws SQLException, ClassNotFoundException {
+    public void insertExam(String question, int subject) throws SQLException, ClassNotFoundException {
 
         createExamTable();
 
         Connection connection = getDBConnection();
         Statement statement = null;
         statement = connection.createStatement();
-        String insertSql = "INSERT INTO exam (subject , question) VALUES (" + subject + ", "+ question + ") ";
+        String insertSql = "INSERT INTO exam (subject , question) VALUES (" + subject + ", '" + question + "') ";
         statement.execute(insertSql);
 
     }
@@ -71,16 +72,41 @@ public class Database {
         Statement statement = null;
 
         statement = connection.createStatement();
-        String sql = "SELECT id from subject where name = "+subject;
-        int rs = statement.executeUpdate(sql);
-        return rs;
+        String sql = "SELECT id from subject where name = '" + subject + "'";
+        int id = 0;
+        ResultSet rs = statement.executeQuery(sql);
+        while (rs.next()) {
+            id = rs.getInt(1);
+        }
+
+        return id;
     }
+
     public void insertSubject(String name) throws ClassNotFoundException, SQLException {
         Connection connection = getDBConnection();
         Statement statement = null;
 
         statement = connection.createStatement();
-        String sql = "INSERT INTO subject (name) VALUES (" + name+" ) ";
+        String sql = "INSERT INTO subject (name) VALUES ('" + name + "') ";
         statement.executeUpdate(sql);
+    }
+
+    public ArrayList<String> getAllSubject() throws ClassNotFoundException, SQLException {
+        ArrayList<String> allSub = new ArrayList<>();
+        Connection connection = getDBConnection();
+        Statement statement = null;
+
+        statement = connection.createStatement();
+        String sql = "SELECT name FROM subject";
+        try {
+            ResultSet rs = statement.executeQuery(sql);
+            // Array array = rs.getArray("name");
+            while (rs.next()) {
+                allSub.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            allSub.add("There is no subject! ");
+        }
+        return allSub;
     }
 }

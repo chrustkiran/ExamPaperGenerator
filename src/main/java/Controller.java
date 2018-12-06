@@ -2,13 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class Controller {
     private Writer writer;
     private String subjects;
+    private Database database;
 
     public Controller(){
         writer = new Writer();
+        database = new Database();
     }
 
     public String[] getComboItems() {
@@ -25,9 +28,11 @@ public class Controller {
     }
 
 
-    public void addSubjects() throws IOException {
+    public void addSubjects() throws IOException, SQLException, ClassNotFoundException {
         String newSubject = JOptionPane.showInputDialog("Here you can add the subject.");
-        writer.writeFile("subjects.txt" , newSubject);
+        database.createSubjectTable();
+        database.insertSubject(newSubject);
+       // writer.writeFile("subjects.txt" , newSubject);
     }
 
     public void openFile(Component parent , Object selectedItem) throws IOException {

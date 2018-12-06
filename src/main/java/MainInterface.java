@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class MainInterface {
     private JComboBox comboSubjects;
@@ -18,7 +19,7 @@ public class MainInterface {
     private Writer writer;
     private Database database;
 
-    public MainInterface() {
+    public MainInterface() throws SQLException, ClassNotFoundException {
 
         //Initializing variables
         controller = new Controller();
@@ -58,15 +59,22 @@ public class MainInterface {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                   // controller.addSubjects();
-                    database.createSubjectTable();
-                }  catch (SQLException e1) {
+                   controller.addSubjects();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (SQLException e1) {
                     e1.printStackTrace();
                 } catch (ClassNotFoundException e1) {
                     e1.printStackTrace();
                 }
                 comboSubjects.removeAllItems();
-                addComboBox();
+                try {
+                    addComboBox();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                } catch (ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -97,8 +105,8 @@ public class MainInterface {
         return jpanel;
     }
 
-    private void addComboBox() {        //Adding items to combo box.
-        String[] subjectsArrays = controller.getComboItems();
+    private void addComboBox() throws SQLException, ClassNotFoundException {        //Adding items to combo box.
+        ArrayList<String> subjectsArrays = database.getAllSubject();
         for (String subject : subjectsArrays) {
             comboSubjects.addItem(subject);
         }
