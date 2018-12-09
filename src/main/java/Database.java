@@ -5,19 +5,19 @@ import java.util.ArrayList;
 public class Database {
 
 
-    private static String JDBC_DRIVER;
+    private static String DB_DRIVER;
     private static String DB_CONNECTION;
     private static String DB_USER;
     private static String DB_PASSWORD;
-
+    private static Config config;
 
     public Database() {
-        Config config = new Config();
+        config = new Config();
         DB_CONNECTION = config.getProp().getProperty("DB_CONNECTION");
         System.out.println(DB_CONNECTION);
         DB_USER = config.getProp().getProperty("DB_USER");
         DB_PASSWORD = config.getProp().getProperty("DB_PASSWORD");
-        JDBC_DRIVER = config.getProp().getProperty("DB_DRIVER");
+        DB_DRIVER = config.getProp().getProperty("DB_DRIVER");
     }
 
     public void createExamTable() throws SQLException, ClassNotFoundException {
@@ -55,11 +55,11 @@ public class Database {
     }
 
     private static Connection getDBConnection() throws ClassNotFoundException {
-        Class.forName("org.h2.Driver");
+        Class.forName(DB_DRIVER);
         Connection dbConnection = null;
         try {
-            dbConnection = DriverManager.getConnection("jdbc:h2:~/test", "sa",
-                    "123");
+            dbConnection = DriverManager.getConnection(DB_CONNECTION, DB_USER,
+                    DB_PASSWORD);
             return dbConnection;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -109,4 +109,40 @@ public class Database {
         }
         return allSub;
     }
+
+    public ResultSet getAllQuesion() throws ClassNotFoundException, SQLException {
+        Connection connection = getDBConnection();
+        Statement statement = null;
+        ResultSet rs = null;
+
+        statement = connection.createStatement();
+        String sql = "SELECT * FROM exam";
+        try {
+            rs = statement.executeQuery(sql);
+            return rs;
+        } catch (SQLException e) {
+
+        }
+        return rs;
+    }
+
+    public String getSubjectById(int id) throws ClassNotFoundException, SQLException {
+        Connection connection = getDBConnection();
+        Statement statement = null;
+        String subject = "";
+        statement = connection.createStatement();
+        String sql = "SELECT name FROM subject where id = " + id;
+        try {
+            ResultSet rs = statement.executeQuery(sql);
+            // Array array = rs.getArray("name");
+            while (rs.next()) {
+                subject = rs.getString(1);
+            }
+        } catch (SQLException e) {
+
+        }
+        return subject;
+    }
 }
+
+
